@@ -1,23 +1,25 @@
 import React, {useState, useEffect} from "react";
-import { Route, Switch } from "react-router-dom";
 import Header from "./Header";
 import Home from "../Home/Home";
 import Study from "../Study/Study";
-import CreateDeck from "../Screens/CreateDeck";
-import NotFound from "../Screens/NotFound";
+import CreateDeck from "../Deck/CreateDeck";
+import NotFound from "./NotFound";
 import ViewDeck from "../ViewDeck/ViewDeck";
-import EditDeck from "../Screens/EditDeck";
-import AddCard from "../Screens/AddCard";
-import EditCard from "../Screens/EditCard";
-import db from "../data/db.json";
-import {listDecks, deleteDeck} from "../utils/api/index";
+import EditDeck from "../Deck/EditDeck";
+import AddCard from "../Card/AddCard";
+import EditCard from "../Card/EditCard";
+import {listDecks, deleteDeck, createDeck} from "../utils/api/index";
+import { Route, Switch, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 function Layout() {
-  const [cards, setCards] = useState(db.cards);
+  let history = useHistory();
+
   const [decks, setDecks] = useState([]);
   const [toDelete, setToDelete] = useState(-1);
+  const [toCreate, setToCreate] = useState({});
 
     useEffect(() => {
+      console.log(toCreate);
       const controller = new AbortController();
       const signal = controller.signal;
       async function getDecks() {
@@ -27,23 +29,32 @@ function Layout() {
       }
       async function deletion(){
           deleteDeck(toDelete, signal)
-          .then(() => setToDelete(-1));
+          .then(() => {
+            setToDelete(-1);
+            history.push("/");
+          });
       }
+      async function creation(){
+        createDeck(toCreate, signal)
+        .then((result) => {
+          console.log(result);
+          setToCreate({});
+          history.push(`/decks/${result.id}`);
+        });
+    }
       if(toDelete !== -1) deletion();
+      else if(toCreate.name) creation();
       else getDecks();
-    }, [toDelete])
+    }, [toDelete, toCreate])
 
   const deckDelete = (deckId) => setToDelete(deckId); 
 
-  const deleteCard = (indexToDelete) => (
-    setCards(cards.filter((card, index) => index !== indexToDelete))
-  );
-  const createCard = (newCard) => (
-    setCards([...newCard, ...cards])
-  ); 
+  const deckCreate = (newDeck) => {
+    console.log(newDeck);
+    setToCreate(newDeck);
+  } 
 
   if(!decks.length) return "Loading";
-  console.log(decks);
   return (
     <>
       <Header />
@@ -53,15 +64,18 @@ function Layout() {
             <Home decks={decks} deckDelete={deckDelete}/>
           </Route>
           <Route path="/decks/new">
-            <CreateDeck />
+            <CreateDeck deckCreate={deckCreate}/>
           </Route>
           <Route exact path="/decks/:deckId">
-            <ViewDeck />
+            <ViewDeck deckDelete={deckDelete}/>
+          </Route>
+          <Route  path="/decks/:deckId/edit">
+              <EditDeck />
           </Route>
           <Route path="/decks/:deckId/study">
             <Study />
           </Route>
-          <Route path="/decks/:deckId/cards/new">
+          <Route exact path="/decks/:deckId/cards/new">
             <AddCard />
           </Route>
           <Route path="/decks/:deckId/cards/:cardId">

@@ -1,17 +1,28 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {Link, useHistory, useParams } from "react-router-dom";
-import {updateDeck} from "../utils/api/index"
+import {updateDeck, readDeck} from "../utils/api/index"
 
-export default function EditDeck({deckObject}){
+export default function EditDeck(){
+
     let history = useHistory();
     const {deckId} = useParams();
-    const [formData, setFormData] = useState(deckObject);
-    
-    console.log(deckObject);
+    const [deck, setDeck] = useState({})
+
+    useEffect (() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
+        async function loadDeck(){
+            const newDeck = readDeck(deckId, signal);
+            newDeck.then((result) => setDeck(result))
+        }
+        loadDeck();
+    }, [])
+
+    if(!deck.id) return "Loading...";
 
     const changeHandler = ({target}) => {
-        setFormData({
-            ...formData, [target.name]: target.value
+        setDeck({
+            ...deck, [target.name]: target.value
         })
     }
 
@@ -20,8 +31,8 @@ export default function EditDeck({deckObject}){
         const controller = new AbortController();
         const signal = controller.signal;
         async function deckUpdate() {
-            updateDeck(formData, signal)
-                .then((result) => history.push(`/decks/${result.id}`))
+            updateDeck(deck, signal)
+                .then(() => history.push(`/decks/${deckId}`))
         }
         deckUpdate();
     }
@@ -29,7 +40,7 @@ export default function EditDeck({deckObject}){
         <nav aria-label="breadcrumb">
             <ol className="breadcrumb">
                 <li className="breadcrumb-item"><Link to="/">Home</Link></li>
-                <li className="breadcrumb-item"><Link to={`/decks/${deckId}`}>{formData.name}</Link></li>
+                <li className="breadcrumb-item"><Link to={`/decks/${deckId}`}>{deck.name}</Link></li>
                 <li className="breadcrumb-item active">Edit Deck</li>
             </ol>
         </nav>
@@ -40,14 +51,14 @@ export default function EditDeck({deckObject}){
             <h1>Edit Deck</h1>
             <form onSubmit={submitHandler}>
                 <div>
-                    <label for="name">Name</label>
+                    <label htmlFor="name">Name</label>
                     <br />
-                    <input type="text" name="name" id="name" value={formData.name} onChange={changeHandler} />
+                    <input type="text" name="name" id="name" value={deck.name} onChange={changeHandler} />
                 </div>
                 <div>
-                    <label for="description">Description</label>
+                    <label htmlFor="description">Description</label>
                     <br />
-                    <textarea type="text" name="description" id="description" value={formData.description} rows={5} cols={30} onChange={changeHandler} />
+                    <textarea type="text" name="description" id="description" value={deck.description} rows={5} cols={30} onChange={changeHandler} />
                 </div>
                 <div>
                     <Link to={`/decks/${deckId}`} className="btn btn-primary">Cancel</Link>

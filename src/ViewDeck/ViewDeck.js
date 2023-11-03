@@ -1,11 +1,9 @@
 import React, {useEffect, useState} from "react";
-import { Link, Switch, useHistory, useParams, Route } from "react-router-dom/cjs/react-router-dom.min";
-import { readDeck, deleteCard, deleteDeck } from "../utils/api";
+import { Link, useParams } from "react-router-dom/cjs/react-router-dom.min";
+import { readDeck, deleteCard } from "../utils/api";
 import CardList from "./CardList";
-import EditDeck from "../Screens/EditDeck";
 
-export default function ViewDeck() {
-    let history = useHistory();
+export default function ViewDeck({deckDelete}) {
 
     const {deckId} = useParams();
     const [deck, setDeck] = useState({});
@@ -16,7 +14,7 @@ export default function ViewDeck() {
         const signal = controller.signal;
         async function loadDeck(){
             const newDeck = readDeck(deckId, signal);
-            newDeck.then((result) => setDeck({flashDeck: result}));
+            newDeck.then((result) => setDeck(result));
         }
         async function deletion(){
             deleteCard(cardToDelete, signal)
@@ -26,23 +24,14 @@ export default function ViewDeck() {
         else loadDeck();
     }, [cardToDelete])
 
-    console.log(deck);
-
-    if(!deck.flashDeck) return "Loading...";
-
-    console.log(deck);
+    if(!deck.id) return "Loading...";
 
     const handleClick = (event) => {
         if(!window.confirm("Delete this deck? \n \n You will not be able to recover it.")){
             return ;
         } 
-        const deckId = event.target.parentElement.value;
-        const controller = new AbortController();
-        const signal = controller.signal;
-        deleteDeck(deckId, signal).then(() => history.push("/"));
+        deckDelete(deckId);
     };
-
-    const deckObject = deck.flashDeck;
 
     const cardDelete = (cardId) => setCardToDelete(cardId);
 
@@ -50,14 +39,14 @@ export default function ViewDeck() {
         <nav aria-label="breadcrumb">
             <ol className="breadcrumb">
                 <li className="breadcrumb-item"><Link to="/">Home</Link></li>
-                <li className="breadcrumb-item active">{deckObject.name}</li>
+                <li className="breadcrumb-item active">{deck.name}</li>
             </ol>
         </nav>
     );
     const deckDescription = (
         <div>
-            <h5 className="card-title">{deckObject.name}</h5>
-            <p className="card-text">{deckObject.description}</p>
+            <h5 className="card-title">{deck.name}</h5>
+            <p className="card-text">{deck.description}</p>
             <Link to={`/decks/${deckId}/edit`} className="btn btn-primary">Edit</Link>
             <Link to={`/decks/${deckId}/study`} className="btn btn-primary">Study</Link>
             <Link to={`/decks/${deckId}/cards/new`} className="btn btn-primary">Add Cards</Link>
@@ -67,20 +56,14 @@ export default function ViewDeck() {
     const cardList = (
         <div>
             <h3>Cards</h3>
-            <CardList cards={deckObject.cards} cardDelete={cardDelete}/>
+            <CardList cards={deck.cards} cardDelete={cardDelete}/>
         </div>
     );
-    console.log(deckObject);
     return (
-        <Switch>
-            <Route exact path="/decks/:deckId">
-                {nav}
-                {deckDescription}
-                {cardList}
-            </Route>
-            <Route  path="/decks/:deckId/edit">
-                <EditDeck deck={deckObject}/>
-            </Route>
-        </Switch>
+        <div>
+            {nav}
+            {deckDescription}
+            {cardList}
+        </div>
     );
 }

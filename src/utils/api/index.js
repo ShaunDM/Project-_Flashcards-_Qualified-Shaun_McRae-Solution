@@ -217,5 +217,3 @@ export async function deleteCard(cardId, signal) {
   const options = { method: "DELETE", signal };
   return await fetchJson(url, options);
 }
-
-

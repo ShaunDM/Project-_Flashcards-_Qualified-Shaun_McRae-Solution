@@ -4,7 +4,6 @@ import {readDeck} from "../utils/api/index";
 import Front from "./Front";
 import Back from "./Back";
 import End from "./End";
-// import AddCards from ""
 
 export default function Study() {
     const [flipped, setFlipped] = useState(false);
@@ -29,28 +28,26 @@ export default function Study() {
         const signal = controller.signal;
         async function loadDeck(){
             const newDeck = readDeck(deckId, signal);
-            newDeck.then((result) => setDeck({flashDeck: result}));
+            newDeck.then((result) => setDeck(result));
         }
         loadDeck();
     }, [])
 
-    console.log(deck);
+    if(!deck.id) return "Loading...";
 
-    if(!deck.flashDeck) return "Loading...";
-
-    const deckLength = deck.flashDeck.cards.length;
+    const deckLength = deck.cards.length;
 
     const nav = (
         <nav aria-label="breadcrumb">
             <ol className="breadcrumb">
                 <li className="breadcrumb-item"><Link to="/">Home</Link></li>
-                <li className="breadcrumb-item"><Link to={`/decks/${deck.flashDeck.id}}`}>{deck.flashDeck.name}</Link></li>
+                <li className="breadcrumb-item"><Link to={`/decks/${deck.id}`}>{deck.name}</Link></li>
                 <li className="breadcrumb-item active">Study</li>
             </ol>
         </nav>
     );
 
-    const title = <h3>Study: {deck.flashDeck.name}</h3>;
+    const title = <h3>Study: {deck.name}</h3>;
 
     if(deckLength < 3){
         return (
@@ -59,7 +56,7 @@ export default function Study() {
                 {title}
                 <h4>Not enough cards.</h4>
                 <p>You need at least 3 cards to study. There are {deckLength} cards in this deck.</p>
-                <p>AddCards</p>
+                <Link to={`/decks/${deck.id}/cards/new`} className="btn btn-primary">+Add Cards</Link>
             </div>
         );
     }
