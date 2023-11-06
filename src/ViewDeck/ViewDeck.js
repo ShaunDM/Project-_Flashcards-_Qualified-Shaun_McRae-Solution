@@ -44,20 +44,20 @@ export default function ViewDeck({deckDelete}) {
         </nav>
     );
     const deckDescription = (
-        <div>
+        <section>
             <h5 className="card-title">{deck.name}</h5>
             <p className="card-text">{deck.description}</p>
-            <Link to={`/decks/${deckId}/edit`} className="btn btn-primary">Edit</Link>
-            <Link to={`/decks/${deckId}/study`} className="btn btn-primary">Study</Link>
+            <Link to={`/decks/${deckId}/edit`} className="btn btn-secondary">Edit</Link>
+            <Link to={`/decks/${deckId}/study`} className="btn btn-info">Study</Link>
             <Link to={`/decks/${deckId}/cards/new`} className="btn btn-primary">Add Cards</Link>
-            <button onClick={handleClick} className="btn btn-primary">Delete</button>
-        </div>
+            <button onClick={handleClick} className="btn btn-danger">Delete</button>
+        </section>
     );
     const cardList = (
-        <div>
+        <section>
             <h3>Cards</h3>
             <CardList cards={deck.cards} cardDelete={cardDelete}/>
-        </div>
+        </section>
     );
     return (
         <div>

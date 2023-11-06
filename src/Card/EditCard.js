@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from "react";
-import {Link, useHistory, useParams } from "react-router-dom";
+import {Link, useParams, useHistory } from "react-router-dom";
 import {updateCard, readDeck, readCard} from "../utils/api/index"
-import CardForm from "./CardForm";
 
-export default function EditCard(){
+export default function EditCard({formUpdate}){
 
-    let history = useHistory();
     let {deckId, cardId} = useParams();
+    let history = useHistory();
+
     
     const [deck, setDeck] = useState({});
     const [card, setCard] = useState({})
@@ -31,16 +31,13 @@ export default function EditCard(){
 
     if(!deck.id && !card.id) return "Loading";
 
-    console.log(card);
-
-    const update = (cardToUpdate) => {
-        const controller = new AbortController();
-        const signal = controller.signal;
-        async function cardUpdate() {
-            updateCard(cardId, {...cardToUpdate}, signal)
-                .then(() => history.push(`/decks/${deckId}`))
-        }
-        cardUpdate();
+    const changeHandler = ({target}) => {
+        setCard({
+            ...card, [target.name]: target.value
+        });
+    }
+    const submitHandler = () => {
+        formUpdate(card);
     }
     
     const nav = (
@@ -57,7 +54,20 @@ export default function EditCard(){
         <div>
             {nav}
             <h1>Edit Card</h1>
-            <CardForm deckId={deckId} submission={update} card={card} />
+            <div>
+                <label htmlFor="front">Front</label>
+                <br />
+                <textarea type="text" name="front" id="front" value={card.front} rows={3} cols={50} onChange={changeHandler} />
+            </div>
+            <div>
+                <label htmlFor="back">Back</label>
+                <br />
+                <textarea type="text" name="back" id="back" value={card.back} rows={3} cols={50} onChange={changeHandler} />
+            </div>
+            <div>
+                <Link to={`/decks/${deckId}`} className="btn btn-secondary">Done</Link>
+                <button type="submit" onClick={submitHandler} className="btn btn-primary">Save</button>
+            </div>
         </div>
     );
 }

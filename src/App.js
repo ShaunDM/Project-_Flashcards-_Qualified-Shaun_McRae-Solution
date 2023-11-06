@@ -10,7 +10,11 @@ import "./App.css";
 function App() {
   return (
     <div className="app-routes">
-      <Layout />
+      <Switch>
+        <Route path="/">
+          <Layout />
+        </Route>
+      </Switch>
     </div>
   );
 }

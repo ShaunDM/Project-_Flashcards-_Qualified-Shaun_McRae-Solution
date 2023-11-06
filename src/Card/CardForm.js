@@ -1,48 +1,51 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { Link, useParams, Switch, Route, useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import AddCard from "./AddCard";
+import EditCard from "./EditCard";
+import { updateCard, createCard } from "../utils/api";
 
-export default function CardForm({deckId, submission, card}) {
+export default function CardForm({}) {
 
-    const [formData, setFormData] = useState(card);
-    
-    const changeHandler = ({target}) => {
-        console.log("change", formData);
-        setFormData({
-            ...formData, [target.name]: target.value
-        })
+    let history = useHistory();
+
+    const [formData, setFormData] = useState({});
+    const {cardId, deckId} = useParams();
+
+    const formUpdate = (newFormData) => {
+        setFormData(newFormData);
     }
-
-    // const formHandler = ({target}) => {
-    //     console.log("change", target.value)
-    //     updateForm(target)
-    // }
-
+    
     const submitHandler = (event) => {
         event.preventDefault();
-        submission(formData);
-        setFormData(card);
+        const controller = new AbortController();
+        const signal = controller.signal;
+        if(cardId !== "new"){
+            async function cardUpdate() {
+                updateCard(formData, signal)
+                    .then(() => history.push(`/decks/${deckId}`))
+            }
+            cardUpdate();
+        } else{
+            async function cardCreate() {
+                createCard(deckId, {...formData}, signal);
+            }
+            cardCreate();
+        }
     }
-
-    console.log("Formdata: ", formData, card)
 
     const form = (
         <form onSubmit={submitHandler}>
-            <div>
-                <label htmlFor="front">Front</label>
-                <br />
-                <textarea type="text" name="front" id="front" value={formData.front} rows={3} cols={50} onChange={changeHandler} />
-            </div>
-            <div>
-                <label htmlFor="back">Back</label>
-                <br />
-                <textarea type="text" name="back" id="back" value={formData.back} rows={3} cols={50} onChange={changeHandler} />
-            </div>
-            <div>
-                <Link to={`/decks/${deckId}`} className="btn btn-primary">Done</Link>
-                <button type="submit" onClick={submitHandler} className="btn btn-primary">Save</button>
-            </div>
+            <Switch >
+                <Route path = "/decks/:deckId/cards/new" >
+                    <AddCard formUpdate={formUpdate}/>
+                </Route>
+                <Route path = "/decks/:deckId/cards/:cardId/edit" >
+                    <EditCard formUpdate={formUpdate}/>
+                </Route>
+            </Switch>
         </form>
     );
 
     return form;
 }
+

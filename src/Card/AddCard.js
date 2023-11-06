@@ -1,15 +1,16 @@
 import React, {useState, useEffect} from "react";
-import {Link, useParams } from "react-router-dom";
+import {Link, useParams, useHistory } from "react-router-dom";
 import {readDeck, createCard} from "../utils/api/index"
-import CardForm from "./CardForm";
 
-export default function AddCard(){
+export default function AddCard({formUpdate}){
 
-    const initFormData = {front: "", back: ""};
+    const initCardData = {front: "", back: ""};
 
     let {deckId} = useParams();
+    let history = useHistory();
     
     const [deck, setDeck] = useState({});
+    const [card, setCard] = useState(initCardData);
 
     useEffect (() => {
         const controller = new AbortController();
@@ -23,13 +24,15 @@ export default function AddCard(){
 
     if(!deck.id) return "Loading";
     
-    const addCard = (newCard) => {
-        const controller = new AbortController();
-        const signal = controller.signal;
-        async function cardCreate() {
-            createCard(deckId, {...newCard}, signal)
-        }
-        cardCreate();
+    const changeHandler = ({target}) => {
+        setCard({
+            ...card, [target.name]: target.value
+        });
+    }
+
+    const submitHandler = () => {
+        formUpdate(card);
+        setCard(initCardData);
     }
 
     const nav = (
@@ -46,7 +49,20 @@ export default function AddCard(){
         <div>
             {nav}
             <h1>{deck.name}: Add Card</h1>
-            <CardForm deckId={deckId} submission={addCard} card={{...initFormData}}/>
+            <div>
+                <label htmlFor="front">Front</label>
+                <br />
+                <textarea type="text" name="front" id="front" value={card.front} rows={3} cols={50} onChange={changeHandler} />
+            </div>
+            <div>
+                <label htmlFor="back">Back</label>
+                <br />
+                <textarea type="text" name="back" id="back" value={card.back} rows={3} cols={50} onChange={changeHandler} />
+            </div>
+            <div>
+                <Link to={`/decks/${deckId}`} className="btn btn-secondary">Done</Link>
+                <button type="submit" onClick={submitHandler} className="btn btn-primary">Save</button>
+            </div>
         </div>
     );
 }

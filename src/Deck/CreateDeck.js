@@ -41,7 +41,7 @@ export default function CreateDeck({deckCreate}){
                     </label>
                 </div>
                 <div>
-                    <Link to="/" className="btn btn-primary">Cancel</Link>
+                    <Link to="/" className="btn btn-secondary">Cancel</Link>
                     <button type="submit" onClick={handleSubmit} className="btn btn-primary">Submit</button>
                 </div>
             </form>

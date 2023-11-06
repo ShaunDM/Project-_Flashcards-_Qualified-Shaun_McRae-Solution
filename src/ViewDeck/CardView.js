@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom/cjs/react-router-dom.min"
 
 export default function CardView({card, cardDelete}) {
@@ -15,9 +16,9 @@ export default function CardView({card, cardDelete}) {
                 <p className="card-text col-6" >{card.front}</p>
                 <p className="card-text">{card.back}</p>
             </div>
-            <div className="row">
-                <Link to={`/decks/${card.deckId}/cards/${card.id}`} className="btn btn-primary">Edit</Link>
-                <button onClick={handleClick} className="btn btn-primary">Delete</button>
+            <div className="row ">
+                <Link to={`/decks/${card.deckId}/cards/${card.id}/edit`} className="btn btn-secondary">Edit</Link>
+                <button onClick={handleClick} className="btn btn-danger">Delete</button>
             </div>
         </li>
     );

@@ -6,8 +6,7 @@ import CreateDeck from "../Deck/CreateDeck";
 import NotFound from "./NotFound";
 import ViewDeck from "../ViewDeck/ViewDeck";
 import EditDeck from "../Deck/EditDeck";
-import AddCard from "../Card/AddCard";
-import EditCard from "../Card/EditCard";
+import CardForm from "../Card/CardForm";
 import {listDecks, deleteDeck, createDeck} from "../utils/api/index";
 import { Route, Switch, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -19,7 +18,6 @@ function Layout() {
   const [toCreate, setToCreate] = useState({});
 
     useEffect(() => {
-      console.log(toCreate);
       const controller = new AbortController();
       const signal = controller.signal;
       async function getDecks() {
@@ -37,7 +35,6 @@ function Layout() {
       async function creation(){
         createDeck(toCreate, signal)
         .then((result) => {
-          console.log(result);
           setToCreate({});
           history.push(`/decks/${result.id}`);
         });
@@ -50,13 +47,12 @@ function Layout() {
   const deckDelete = (deckId) => setToDelete(deckId); 
 
   const deckCreate = (newDeck) => {
-    console.log(newDeck);
     setToCreate(newDeck);
   } 
 
   if(!decks.length) return "Loading";
   return (
-    <>
+    <div>
       <Header />
       <div className="container">
         <Switch>
@@ -75,18 +71,15 @@ function Layout() {
           <Route path="/decks/:deckId/study">
             <Study />
           </Route>
-          <Route exact path="/decks/:deckId/cards/new">
-            <AddCard />
-          </Route>
           <Route path="/decks/:deckId/cards/:cardId">
-            <EditCard />
+            <CardForm />
           </Route>
           <Route>
             <NotFound />
           </Route>        
         </Switch>
       </div>
-    </>
+    </div>
   );
 }
 

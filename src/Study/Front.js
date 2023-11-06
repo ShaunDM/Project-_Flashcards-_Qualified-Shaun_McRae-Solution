@@ -1,4 +1,4 @@
-
+import React from "react";
 
 export default function Front({deck, card, flipHandler}){
     return (

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom/cjs/react-router-dom.min"
 import {readDeck} from "../utils/api/index";
 import Front from "./Front";
