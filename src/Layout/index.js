@@ -50,7 +50,7 @@ function Layout() {
     setToCreate(newDeck);
   } 
 
-  if(!decks.length) return "Loading";
+  if(!decks.length) return <NotFound />;
   return (
     <div>
       <Header />
