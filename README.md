@@ -27,11 +27,16 @@ Intended to be able to create multiple flashcard decks filled with the individua
 ## Images of current app
 
 ### Home
-
+ ![Home page](/images/home.png)
+ 
 ### View Deck
+ ![View Deckv page](/images/view-deck.png)
 
 ### Study
+ ![Study page](/images/study.png)
 
 ### Edit Deck
+ ![Edit Deck page](/images/edit-deck.png)
 
 ### Edit Card
+![Edit Card page](/images/edit-card.png)
