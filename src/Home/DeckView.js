@@ -14,7 +14,8 @@ export default function DeckView({deck, deckDelete}){
             <h5 className="card-title">{deck.name}</h5>
             <p className="float-right">{deck.cards.length} cards</p>
             <p className="card-text">{deck.description}</p>
-            <Link to={`/decks/${deck.id}`} className="btn btn-secondary">View</Link>
+            <Link to={`/decks/${deck.id}`} className="btn btn-dark">View</Link>
+            <Link to={`decks/${deck.id}/edit`} className="btn btn-secondary">Edit</Link>
             <Link to={`/decks/${deck.id}/study`} className="btn btn-info">Study</Link>
             <button onClick={handleClick} className="btn btn-danger">Delete</button>
         </li>

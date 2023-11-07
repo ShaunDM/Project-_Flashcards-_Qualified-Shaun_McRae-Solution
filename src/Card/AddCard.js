@@ -60,7 +60,7 @@ export default function AddCard({formUpdate}){
                 <textarea type="text" name="back" id="back" value={card.back} rows={3} cols={50} onChange={changeHandler} />
             </div>
             <div>
-                <Link to={`/decks/${deckId}`} className="btn btn-secondary">Done</Link>
+                <Link to={`/decks/${deckId}`} className="btn btn-secondary">Cancel</Link>
                 <button type="submit" onClick={submitHandler} className="btn btn-primary">Save</button>
             </div>
         </div>

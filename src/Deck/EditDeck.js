@@ -61,7 +61,7 @@ export default function EditDeck(){
                     <textarea type="text" name="description" id="description" value={deck.description} rows={5} cols={30} onChange={changeHandler} />
                 </div>
                 <div>
-                    <Link to={`/decks/${deckId}`} className="btn btn-primary">Cancel</Link>
+                    <Link to={`/decks/${deckId}`} className="btn btn-secondary">Cancel</Link>
                     <button type="submit" onClick={submitHandler} className="btn btn-primary">Submit</button>
                 </div>
             </form>
